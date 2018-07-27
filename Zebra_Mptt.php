@@ -63,7 +63,10 @@ class Zebra_Mptt {
      *
      *  @return void
      */
-    public function __construct(&$link, $table_name = 'mptt', $id_column = 'id', $title_column = 'title', $left_column = 'lft', $right_column = 'rgt', $parent_column = 'parent') {
+    public function __construct(&$link, $table_name = 'mptt', $id_column = 'id', $title_column = 'title', $left_column = 'lft', $right_column = 'rgt', $parent_column = 'parent'
+                                        , $filter_column = false
+                                        , $filter_value = false
+    ) {
 
         // stop if required PHP version is not available
         if (version_compare(phpversion(), '5.0.0') < 0) trigger_error('PHP 5.0.0 or greater required', E_USER_ERROR);
@@ -86,6 +89,8 @@ class Zebra_Mptt {
                 'left_column'   =>  $left_column,
                 'right_column'  =>  $right_column,
                 'parent_column' =>  $parent_column,
+                'filter_column' => $filter_column,
+                'filter_value' => $filter_value,
 
             );
 
@@ -229,6 +234,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['left_column'] . '` = `' . $this->properties['left_column'] . '` + 2
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->properties['filter_value'])."' AND " : "").'
                     `' . $this->properties['left_column'] . '` > ' . $boundary . '
 
             ');
@@ -240,6 +246,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['right_column'] . '` = `' . $this->properties['right_column'] . '` + 2
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->properties['filter_value'])."' AND " : "").'
                     `' . $this->properties['right_column'] . '` > ' . $boundary . '
 
             ');
@@ -249,6 +256,7 @@ class Zebra_Mptt {
                 INSERT INTO
                     `' . $this->properties['table_name'] . '`
                     (
+                        '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`, " : "").'
                         `' . $this->properties['title_column'] . '`,
                         `' . $this->properties['left_column'] . '`,
                         `' . $this->properties['right_column'] . '`,
@@ -256,6 +264,7 @@ class Zebra_Mptt {
                     )
                 VALUES
                     (
+                        '.($this->properties['filter_column'] !== false ? " '".mysqli_real_escape_string($this->properties['filter_value'])."', " : "").'
                         "' . mysqli_real_escape_string($this->link, $title) . '",
                         ' . ($boundary + 1) . ',
                         ' . ($boundary + 2) . ',
@@ -451,6 +460,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['left_column'] . '` = `' . $this->properties['left_column'] . '` + ' . $source_rl_difference . '
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->properties['filter_value'])."' AND " : "").'
                     `' . $this->properties['left_column'] . '` > ' . $target_boundary . '
 
             ');
@@ -462,6 +472,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['right_column'] . '` = `' . $this->properties['right_column'] . '` + ' . $source_rl_difference . '
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->properties['filter_value'])."' AND " : "").'
                     `' . $this->properties['right_column'] . '` > ' . $target_boundary . '
 
             ');
@@ -483,6 +494,7 @@ class Zebra_Mptt {
                     INSERT INTO
                         `' . $this->properties['table_name'] . '`
                         (
+                            '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`, " : "").'
                             `' . $this->properties['title_column'] . '`,
                             `' . $this->properties['left_column'] . '`,
                             `' . $this->properties['right_column'] . '`,
@@ -490,6 +502,7 @@ class Zebra_Mptt {
                         )
                     VALUES
                         (
+                            '.($this->properties['filter_column'] !== false ? " '".mysqli_real_escape_string($this->properties['filter_value'])."', " : "").'
                             "' . mysqli_real_escape_string($this->link, $properties[$this->properties['title_column']]) . '",
                             ' . $properties[$this->properties['left_column']] . ',
                             ' . $properties[$this->properties['right_column']] . ',
@@ -621,6 +634,7 @@ class Zebra_Mptt {
                 FROM
                     `' . $this->properties['table_name'] . '`
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' AND " : "").'
                     `' . $this->properties['left_column'] . '` >= ' . $this->lookup[$node][$this->properties['left_column']] . ' AND
                     `' . $this->properties['right_column'] . '` <= ' . $this->lookup[$node][$this->properties['right_column']] . '
 
@@ -667,6 +681,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['left_column'] . '` = `' . $this->properties['left_column'] . '` - ' . $target_rl_difference . '
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' AND " : "").'
                     `' . $this->properties['left_column'] . '` > ' . $boundary . '
 
             ');
@@ -678,6 +693,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['right_column'] . '` = `' . $this->properties['right_column'] . '` - ' . $target_rl_difference . '
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' AND " : "").'
                     `' . $this->properties['right_column'] . '` > ' . $boundary . '
 
             ');
@@ -1148,6 +1164,7 @@ class Zebra_Mptt {
                     `' . $this->properties['left_column'] . '` = `' . $this->properties['left_column'] . '` * -1,
                     `' . $this->properties['right_column'] . '` = `' . $this->properties['right_column'] . '` * -1
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' AND " : "").'
                     `' . $this->properties['left_column'] . '` >= ' . $this->lookup[$source][$this->properties['left_column']] . ' AND
                     `' . $this->properties['right_column'] . '` <= ' . $this->lookup[$source][$this->properties['right_column']] . '
 
@@ -1181,6 +1198,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['left_column'] . '` = `' . $this->properties['left_column'] . '` - ' . $source_rl_difference . '
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' AND " : "").'
                     `' . $this->properties['left_column'] . '` > ' . $source_boundary . '
 
             ');
@@ -1192,6 +1210,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['right_column'] . '` = `' . $this->properties['right_column'] . '` - ' . $source_rl_difference . '
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' AND " : "").'
                     `' . $this->properties['right_column'] . '` > ' . $source_boundary . '
 
             ');
@@ -1266,6 +1285,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['left_column'] . '` = `' . $this->properties['left_column'] . '` + ' . $source_rl_difference . '
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' AND " : "").'
                     `' . $this->properties['left_column'] . '` > ' . $target_boundary . '
 
             ');
@@ -1277,6 +1297,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['right_column'] . '` = `' . $this->properties['right_column'] . '` + ' . $source_rl_difference . '
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' AND " : "").'
                     `' . $this->properties['right_column'] . '` > ' . $target_boundary . '
 
             ');
@@ -1309,6 +1330,7 @@ class Zebra_Mptt {
                     `' . $this->properties['left_column'] . '` = (`' . $this->properties['left_column'] . '` - ' . $shift . ') * -1,
                     `' . $this->properties['right_column'] . '` = (`' . $this->properties['right_column'] . '` - ' . $shift . ') * -1
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' AND " : "").'
                     `' . $this->properties['left_column'] . '` < 0
 
             ');
@@ -1321,6 +1343,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['parent_column'] . '` = ' . $target . '
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' AND " : "").'
                     `' . $this->properties['id_column'] . '` = ' . $source . '
 
             ');
@@ -1379,6 +1402,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['title_column'] . '` = "' . $title . '"
                 WHERE
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' AND " : "").'
                     `' . $this->properties['id_column'] . '` = ' . $node . '
 
             ');
@@ -1574,6 +1598,7 @@ class Zebra_Mptt {
                     *
                 FROM
                     `' . $this->properties['table_name'] . '`
+                    '.($this->properties['filter_column'] !== false ? " WHERE `".$this->properties['filter_column']."`='".$this->properties['filter_value']."' " : "").'
                 ORDER BY
                     `' . $this->properties['left_column'] . '`
 
