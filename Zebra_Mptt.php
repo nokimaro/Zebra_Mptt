@@ -234,7 +234,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['left_column'] . '` = `' . $this->properties['left_column'] . '` + 2
                 WHERE
-                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->properties['filter_value'])."' AND " : "").'
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->link, $this->properties['filter_value'])."' AND " : "").'
                     `' . $this->properties['left_column'] . '` > ' . $boundary . '
 
             ');
@@ -246,7 +246,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['right_column'] . '` = `' . $this->properties['right_column'] . '` + 2
                 WHERE
-                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->properties['filter_value'])."' AND " : "").'
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->link, $this->properties['filter_value'])."' AND " : "").'
                     `' . $this->properties['right_column'] . '` > ' . $boundary . '
 
             ');
@@ -264,7 +264,7 @@ class Zebra_Mptt {
                     )
                 VALUES
                     (
-                        '.($this->properties['filter_column'] !== false ? " '".mysqli_real_escape_string($this->properties['filter_value'])."', " : "").'
+                        '.($this->properties['filter_column'] !== false ? " '".mysqli_real_escape_string($this->link, $this->properties['filter_value'])."', " : "").'
                         "' . mysqli_real_escape_string($this->link, $title) . '",
                         ' . ($boundary + 1) . ',
                         ' . ($boundary + 2) . ',
@@ -460,7 +460,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['left_column'] . '` = `' . $this->properties['left_column'] . '` + ' . $source_rl_difference . '
                 WHERE
-                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->properties['filter_value'])."' AND " : "").'
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->link, $this->properties['filter_value'])."' AND " : "").'
                     `' . $this->properties['left_column'] . '` > ' . $target_boundary . '
 
             ');
@@ -472,7 +472,7 @@ class Zebra_Mptt {
                 SET
                     `' . $this->properties['right_column'] . '` = `' . $this->properties['right_column'] . '` + ' . $source_rl_difference . '
                 WHERE
-                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->properties['filter_value'])."' AND " : "").'
+                    '.($this->properties['filter_column'] !== false ? " `".$this->properties['filter_column']."`='".mysqli_real_escape_string($this->link, $this->properties['filter_value'])."' AND " : "").'
                     `' . $this->properties['right_column'] . '` > ' . $target_boundary . '
 
             ');
@@ -502,7 +502,7 @@ class Zebra_Mptt {
                         )
                     VALUES
                         (
-                            '.($this->properties['filter_column'] !== false ? " '".mysqli_real_escape_string($this->properties['filter_value'])."', " : "").'
+                            '.($this->properties['filter_column'] !== false ? " '".mysqli_real_escape_string($this->link, $this->properties['filter_value'])."', " : "").'
                             "' . mysqli_real_escape_string($this->link, $properties[$this->properties['title_column']]) . '",
                             ' . $properties[$this->properties['left_column']] . ',
                             ' . $properties[$this->properties['right_column']] . ',
